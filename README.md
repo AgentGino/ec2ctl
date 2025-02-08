@@ -1,6 +1,6 @@
-# EC2CTL
+# EC2CTL (Experimental)
 
-EC2CTL is a CLI tool for managing AWS EC2 instances, designed as an alternative to Multipass CLI.
+EC2CTL is a CLI tool for managing AWS EC2 instances, designed as an alternative to Multipass CLI. 
 
 ## Installation
 
