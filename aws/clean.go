@@ -48,8 +48,9 @@ func Clean(cmd *cobra.Command, args []string) {
 
 	// Delete the security group
 	client.DeleteSecurityGroup(cmd.Context(), &ec2.DeleteSecurityGroupInput{
-		GroupId: aws.String("ec2ctl-sg"),
+		GroupName: aws.String("ec2ctl-sg"),
 	})
+
 	if err != nil {
 		logger.Error("failed to delete security group: %v", err)
 	}
