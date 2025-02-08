@@ -17,7 +17,7 @@ import (
 )
 
 func Init(cmd *cobra.Command, args []string) {
-	allowLocal, _ := cmd.Flags().GetBool("allowLocal")
+	allowLocal, _ := cmd.Flags().GetBool("allow-local")
 
 	cfg, err := config.LoadDefaultConfig(cmd.Context())
 	if err != nil {

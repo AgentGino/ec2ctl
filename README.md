@@ -18,14 +18,23 @@ EC2CTL is a CLI tool for managing AWS EC2 instances, designed as an alternative 
 ## Usage
 
 ```bash
+# Initialize ec2ctl
+ec2ctl init [--allow-local]
+
 # List all EC2 instances
 ec2ctl list
 
 # Create a new EC2 instance
-ec2ctl create
+ec2ctl create [name] [instance-type] [ami]
 
 # Delete an EC2 instance
-ec2ctl delete [instance-id]
+ec2ctl delete [name]
+
+# SSH into an EC2 instance
+ec2ctl ssh [name]
+
+# Clean up all EC2 instances and security groups
+ec2ctl clean
 ```
 
 ## Configuration
