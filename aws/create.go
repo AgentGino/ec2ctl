@@ -17,9 +17,15 @@ import (
 )
 
 func CreateInstance(cmd *cobra.Command, args []string) {
-	name, _ := cmd.Flags().GetString("name")
+	// Get the name from positional argument
+	name := args[0]
+
+	// Get flags
 	instanceType, _ := cmd.Flags().GetString("instance-type")
 	ami, _ := cmd.Flags().GetString("ami")
+
+	logger.Info("Creating instance with name: %s, instance type: %s, AMI: %s",
+		name, instanceType, ami)
 
 	if instanceType == "" {
 		instanceType = "t2.micro"
@@ -35,6 +41,14 @@ func CreateInstance(cmd *cobra.Command, args []string) {
 	}
 
 	client := ec2.NewFromConfig(cfg)
+
+	// Read security group ID from config file
+	configBytes, err := os.ReadFile(".ec2ctl.json")
+	if err != nil {
+
+		Init(cmd, []string{})
+
+	}
 
 	logger.Info("Generating SSH key pair")
 	// Generate SSH key pair
@@ -63,12 +77,6 @@ func CreateInstance(cmd *cobra.Command, args []string) {
 		logger.Error("failed to save private key, %v", err)
 	}
 
-	// Read security group ID from config file
-	configBytes, err := os.ReadFile(".ec2ctl.json")
-	if err != nil {
-		logger.Error("failed to read config file. Please run 'ec2ctl init' first: %v", err)
-	}
-
 	var config struct {
 		SecurityGroupID string `json:"security_group_id"`
 	}
@@ -93,7 +101,7 @@ func CreateInstance(cmd *cobra.Command, args []string) {
 				Tags: []types.Tag{
 					{
 						Key:   aws.String("Name"),
-						Value: aws.String(args[0]),
+						Value: aws.String(name),
 					},
 					{
 						Key:   aws.String("Project"),
@@ -141,13 +149,13 @@ Host %s
 	HostName %s
 	User ec2-user
 	IdentityFile %s
-`, args[0], publicIp, privateKeyPath)
+`, name, publicIp, privateKeyPath)
 
 	// Write SSH config entry to file
-	err = os.WriteFile(fmt.Sprintf("%s.config", args[0]), []byte(sshConfigEntry), 0600)
+	err = os.WriteFile(fmt.Sprintf("%s.config", name), []byte(sshConfigEntry), 0600)
 	if err != nil {
 		logger.Error("failed to write SSH config entry, %v", err)
 	}
 
-	logger.Success("Created instance %s with SSH key %s\nSSH config saved to %s.config\n", instanceId, keyName, args[0])
+	logger.Success("Created instance %s with SSH key %s\nSSH config saved to %s.config\n", instanceId, keyName, name)
 }

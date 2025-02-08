@@ -25,7 +25,7 @@ ec2ctl init [--allow-local]
 ec2ctl list
 
 # Create a new EC2 instance
-ec2ctl create [name] [instance-type] [ami]
+ec2ctl create [name] [--instance-type] [--ami]
 
 # Delete an EC2 instance
 ec2ctl delete [name]

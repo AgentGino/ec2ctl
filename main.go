@@ -21,16 +21,20 @@ var listCmd = &cobra.Command{
 	Run:   aws.ListInstances,
 }
 
-// take name, instance type, ami
 var createCmd = &cobra.Command{
-	Use:   "create [name] [instance-type] [ami]",
+	Use:   "create <name>",
 	Short: "Create a new EC2 instance",
-	Args:  cobra.ExactArgs(3),
+	Args:  cobra.ExactArgs(1),
 	Run:   aws.CreateInstance,
+	Example: `  # Create instance with default settings
+  ec2ctl create myinstance
+
+  # Create instance with specific type and AMI
+  ec2ctl create myinstance --instance-type t2.micro --ami ami-0440d3b780d96b29d`,
 }
 
 var deleteCmd = &cobra.Command{
-	Use:   "delete [instance-name]",
+	Use:   "delete [name]",
 	Short: "Delete an EC2 instance",
 	Args:  cobra.ExactArgs(1),
 	Run:   aws.DeleteInstance,
@@ -57,7 +61,13 @@ var cleanCmd = &cobra.Command{
 }
 
 func init() {
-	initCmd.Flags().Bool("allowLocal", false, "Allow SSH access only from local public IP")
+	// Add flags for createCmd
+	createCmd.Flags().String("instance-type", "t2.micro", "Instance type")
+	createCmd.Flags().String("ami", "ami-0440d3b780d96b29d", "AMI ID")
+
+	// Add flag for initCmd
+	initCmd.Flags().Bool("allow-local", false, "Allow SSH access only from local public IP")
+
 	rootCmd.AddCommand(listCmd)
 	rootCmd.AddCommand(createCmd)
 	rootCmd.AddCommand(deleteCmd)
